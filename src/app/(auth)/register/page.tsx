@@ -88,7 +88,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Nickname</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="John" required />
+                      <Input
+                        {...field}
+                        placeholder="John"
+                        required
+                        className="capitalize"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Loader2 } from "lucide-react";
+import { CheckSquare, Loader2, Square } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { registerSchema } from "./_schemas/registerSchema";
 import * as z from "zod";
@@ -34,6 +34,15 @@ import Socials from "../_components/socials";
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+
+  const passwordRequirements = [
+    { regex: /.{8,}/, message: "At least 8 characters" },
+    { regex: /[A-Z]/, message: "One uppercase letter" },
+    { regex: /[a-z]/, message: "One lowercase letter" },
+    { regex: /[0-9]/, message: "One number" },
+    { regex: /[!@#$%^&*(),.?\":{}|<>]/, message: "One special character" },
+  ];
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -112,9 +121,39 @@ export default function RegisterPage() {
                         type="password"
                         placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
                         required
+                        onFocus={() => setIsPasswordInputFocused(true)}
+                        onBlur={() => setIsPasswordInputFocused(false)}
                       />
                     </FormControl>
                     <FormMessage />
+                    {isPasswordInputFocused && (
+                      <>
+                        {passwordRequirements.map((requirement, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2"
+                          >
+                            {requirement.regex.test(field.value || "") ? (
+                              <CheckSquare
+                                className="text-green-500"
+                                size={16}
+                              />
+                            ) : (
+                              <Square size={16} />
+                            )}
+                            <div
+                              className={`text-sm ${
+                                requirement.regex.test(field.value || "")
+                                  ? "text-green-500"
+                                  : ""
+                              }`}
+                            >
+                              {requirement.message}
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </FormItem>
                 )}
               />

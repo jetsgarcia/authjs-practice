@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { CheckSquare, Loader2, Square } from "lucide-react";
+import { CheckSquare, Eye, EyeOff, Loader2, Square } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { registerSchema } from "./_schemas/registerSchema";
 import * as z from "zod";
@@ -35,6 +35,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isPasswordInputFocused, setIsPasswordInputFocused] = useState(false);
+  const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
+    useState(false);
 
   const passwordRequirements = [
     { regex: /.{8,}/, message: "At least 8 characters" },
@@ -116,14 +119,26 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
-                        required
-                        onFocus={() => setIsPasswordInputFocused(true)}
-                        onBlur={() => setIsPasswordInputFocused(false)}
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          type={passwordVisibility ? "text" : "password"}
+                          placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
+                          required
+                          onFocus={() => setIsPasswordInputFocused(true)}
+                          onBlur={() => setIsPasswordInputFocused(false)}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() =>
+                            setPasswordVisibility(!passwordVisibility)
+                          }
+                          className="absolute right-0 top-0"
+                        >
+                          {passwordVisibility ? <Eye /> : <EyeOff />}
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                     {isPasswordInputFocused && (
@@ -164,12 +179,26 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="password"
-                        placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
-                        required
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          type={confirmPasswordVisibility ? "text" : "password"}
+                          placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
+                          required
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() =>
+                            setConfirmPasswordVisibility(
+                              !confirmPasswordVisibility
+                            )
+                          }
+                          className="absolute right-0 top-0"
+                        >
+                          {confirmPasswordVisibility ? <Eye /> : <EyeOff />}
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

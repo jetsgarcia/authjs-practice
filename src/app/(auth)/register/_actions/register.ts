@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { registerSchema } from "../_schemas/registerSchema";
 import bcrypt from "bcrypt";
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 
 export async function register(values: z.infer<typeof registerSchema>) {
   const validatedFields = registerSchema.safeParse(values);
@@ -14,20 +14,22 @@ export async function register(values: z.infer<typeof registerSchema>) {
 
   const { nickname, email, password } = values;
 
+  const lowerCaseEmail = email.toLowerCase();
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const existingUser = await db.user.findUnique({
-    where: { email },
+  // Make sure email is not already used
+  const existingUser = await prisma.user.findUnique({
+    where: { email: lowerCaseEmail },
   });
 
   if (existingUser) {
     return { error: "Email already used" };
   }
 
-  await db.user.create({
+  await prisma.user.create({
     data: {
       nickname,
-      email,
+      email: lowerCaseEmail,
       password: hashedPassword,
     },
   });
